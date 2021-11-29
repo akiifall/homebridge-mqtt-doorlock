@@ -1,0 +1,43 @@
+{
+  "name": "homebridge-mqtt-doorlock",
+  "version": "1.0.0",
+  "description": "doorlock accessory plugin for homebridge written in Typescript",
+  "main": "dist/accessory.js",
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "build": "rimraf ./dist && tsc",
+    "prepublishOnly": "npm run build",
+    "postpublish": "npm run clean",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "akii the fall <ryokhan123@gmail.com>",
+  "engines": {
+    "homebridge": ">=1.0.0"
+  },
+  "keywords": [
+    "homebridge-plugin"
+  ],
+  "license": "ISC",
+  "files": [
+    "LICENSE",
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/akiifall/homebridge-mqtt-doorlock.git"
+  },
+  "bugs": {
+    "url": "https://github.com/akiifall/homebridge-mqtt-doorlock/issues"
+  },
+  "devDependencies": {
+    "@types/node": "10.17.19",
+    "homebridge": "^1.0.4",
+    "rimraf": "^3.0.2",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "@types/ws": "^8.2.0",
+    "mqtt": "^4.2.8"
+  },
+  "homepage": "https://github.com/akiifall/homebridge-mqtt-doorlock#readme"
+}

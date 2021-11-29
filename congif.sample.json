@@ -1,0 +1,33 @@
+{
+    "bridge": {
+        "name": "Homebridge",
+        "username": "Homebridge",
+        "port": 51148,
+        "pin": "131-99-052"
+    },
+    "accessories": [
+        {
+            "accessory": "ToggleSwitch",
+            "name": "ToggleSwitch",
+            "manufacturer": "manufacturer",
+            "model": "model",
+            "serialNumber": "serialNumber",
+            "mqttUrl": "mqtt://localhost",
+            "mqttUser": "mqtt",
+            "mqttPass": "mqtt",
+            "topicStatus": "home/status",
+            "topicCommand": "home/command",
+            "onCommand": "{\"Command\":\"setOn\"}",
+            "offCommand": "{\"Command\": \"setOff\"}",
+            "onValue": "ON",
+            "offValue": "OFF"
+        }
+    ],
+    "platforms": [
+        {
+            "name": "Config",
+            "port": 8581,
+            "platform": "config"
+        }
+    ]
+}
