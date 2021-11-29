@@ -145,8 +145,9 @@ class DoorLock implements AccessoryPlugin {
         }  
 
         if (setValue == true) {
-          this.deviceService.getCharacteristic(Characteristic.LockCurrentState).updateValue(this.deviceOnOff, undefined, 'fromSetValue');
-          this.deviceService.getCharacteristic(Characteristic.LockTargetState).updateValue(this.deviceOnOff, undefined, 'fromSetValue');
+          this.deviceService.updateCharacteristic(this.api.hap.Characteristic.LockCurrentState, this.deviceOnOff);
+          this.deviceService.updateCharacteristic(this.api.hap.Characteristic.LockTargetState, this.deviceOnOff);
+
           setValue = false;
           this.log.info("Set door to : " + this.deviceOnOff);
         }
