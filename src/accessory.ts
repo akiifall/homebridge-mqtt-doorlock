@@ -45,7 +45,6 @@ class DoorLock implements AccessoryPlugin {
   private topicCommand: string;
   private onCommand: string;
   private offCommand: string;
-  private statusCommand: string;
   private onValue: string;
   private offValue: string;
 
@@ -66,7 +65,6 @@ class DoorLock implements AccessoryPlugin {
     this.topicCommand = config.topicCommand;
     this.onCommand = config.onCommand;
     this.offCommand = config.offCommand;
-    this.statusCommand = config.statusCommand;
     this.onValue = config.onValue;
     this.offValue = config.offValue;
     this.lastDeviceStatus = "";
