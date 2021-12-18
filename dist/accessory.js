@@ -6,7 +6,6 @@ let hap;
 const mqtt_1 = __importDefault(require("mqtt"));
 class DoorLock {
     constructor(log, config, api) {
-        this.deviceOnOff = false;
         this.log = log;
         this.api = api;
         this.deviceName = config.name;
@@ -20,6 +19,7 @@ class DoorLock {
         this.topicCommand = config.topicCommand;
         this.onCommand = config.onCommand;
         this.offCommand = config.offCommand;
+        this.statusCommand = config.statusCommand;
         this.onValue = config.onValue;
         this.offValue = config.offValue;
         this.informationService = new hap.Service.AccessoryInformation()
@@ -28,9 +28,11 @@ class DoorLock {
             .setCharacteristic(hap.Characteristic.SerialNumber, this.serialNumber);
         // Service Type
         this.deviceService = new hap.Service.LockMechanism(this.deviceName);
+        this.deviceService.getCharacteristic(this.api.hap.Characteristic.LockCurrentState)
+            .on("get" /* GET */, this.getLockCurrentStateHandler.bind(this));
         this.deviceService.getCharacteristic(this.api.hap.Characteristic.LockTargetState)
-            .on("get" /* GET */, this.getOnHandler.bind(this))
-            .on("set" /* SET */, this.setOnHandler.bind(this));
+            .on("get" /* GET */, this.getLockTargetStateHandler.bind(this))
+            .on("set" /* SET */, this.setLockTargetStateHandler.bind(this));
         this.mqttOptions = {
             keepalive: 10,
             clientId: this.deviceName + "_" + (Math.random() * 10000).toFixed(0),
@@ -54,43 +56,39 @@ class DoorLock {
         this.setMqttEvent();
         this.log.info(this.deviceName + " plugin loaded.");
     }
-    getOnHandler(callback) {
-        callback(null, this.deviceOnOff);
+    getLockCurrentStateHandler(callback) {
+        let jsonCommand = this.statusCommand;
+        this.mqttClient.publish(this.topicCommand, jsonCommand);
+        callback(null, this.deviceService.getCharacteristic(this.api.hap.Characteristic.LockCurrentState).value);
     }
-    setOnHandler(value, callback) {
-        if (this.deviceOnOff != value) {
-            let jsonCommand;
-            if (value == true) {
-                jsonCommand = this.onCommand;
-            }
-            else {
-                jsonCommand = this.offCommand;
-            }
-            this.deviceOnOff = value;
-            this.mqttClient.publish(this.topicCommand, jsonCommand);
-            callback(null);
+    getLockTargetStateHandler(callback) {
+        callback(null, this.deviceService.getCharacteristic(this.api.hap.Characteristic.LockTargetState).value);
+    }
+    setLockTargetStateHandler(value, callback) {
+        let jsonCommand;
+        if (value == 0) { // OPEN
+            jsonCommand = this.offCommand;
         }
+        else { // CLOSE
+            jsonCommand = this.onCommand;
+        }
+        this.mqttClient.publish(this.topicCommand, jsonCommand);
+        callback(null);
     }
     setMqttEvent() {
         this.mqttClient.on("message", (topic, message) => {
             if (topic === this.topicStatus) {
                 let jsonData = JSON.parse(message.toString());
                 let deviceStatus = jsonData.DeviceStatus;
-                let setValue = false;
-                if (deviceStatus == this.onValue && this.deviceOnOff == false) {
-                    this.deviceOnOff = true;
-                    setValue = true;
+                if (deviceStatus == this.offValue) { // OPEN
+                    this.deviceService.setCharacteristic(this.api.hap.Characteristic.LockCurrentState, 0);
+                    this.deviceService.setCharacteristic(this.api.hap.Characteristic.LockTargetState, 0);
                 }
-                if (deviceStatus == this.offValue && this.deviceOnOff == true) {
-                    this.deviceOnOff = false;
-                    setValue = true;
+                else { // CLOSE
+                    this.deviceService.setCharacteristic(this.api.hap.Characteristic.LockCurrentState, 1);
+                    this.deviceService.setCharacteristic(this.api.hap.Characteristic.LockTargetState, 1);
                 }
-                if (setValue == true) {
-                    this.deviceService.updateCharacteristic(this.api.hap.Characteristic.LockCurrentState, this.deviceOnOff);
-                    this.deviceService.updateCharacteristic(this.api.hap.Characteristic.LockTargetState, this.deviceOnOff);
-                    setValue = false;
-                    this.log.info("Set door to : " + this.deviceOnOff);
-                }
+                this.log.info("Set door to : " + deviceStatus);
             }
         });
         this.mqttClient.on("connect", () => {

@@ -1,1 +1,1 @@
-personal use only. sorry :)
+- Door Lock Accessory with Local MQTT Server

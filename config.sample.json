@@ -19,6 +19,7 @@
             "topicCommand": "home/command",
             "onCommand": "{\"Command\":\"setOn\"}",
             "offCommand": "{\"Command\": \"setOff\"}",
+            "getStatusCommand": "JSON COMMAND",
             "onValue": "ON",
             "offValue": "OFF"
         }

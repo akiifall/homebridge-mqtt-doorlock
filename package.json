@@ -1,6 +1,6 @@
 {
   "name": "homebridge-mqtt-doorlock",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "doorlock accessory plugin for homebridge written in Typescript",
   "main": "dist/accessory.js",
   "scripts": {
