@@ -49,6 +49,8 @@ class DoorLock implements AccessoryPlugin {
   private onValue: string;
   private offValue: string;
 
+  private lastDeviceStatus: string;
+
   constructor(log: Logging, config: AccessoryConfig, api: API) {
     this.log = log;
     this.api = api;
@@ -67,6 +69,7 @@ class DoorLock implements AccessoryPlugin {
     this.statusCommand = config.statusCommand;
     this.onValue = config.onValue;
     this.offValue = config.offValue;
+    this.lastDeviceStatus = "";
     
     this.informationService = new hap.Service.AccessoryInformation()
       .setCharacteristic(hap.Characteristic.Manufacturer, this.manufacturer)
@@ -139,17 +142,19 @@ class DoorLock implements AccessoryPlugin {
       if (topic === this.topicStatus) {
         let jsonData = JSON.parse(message.toString());
         let deviceStatus: string = jsonData.DeviceStatus;
-
-        if (deviceStatus == this.offValue) { // OPEN
-          this.deviceService.setCharacteristic(this.api.hap.Characteristic.LockCurrentState, 0);
-          this.deviceService.setCharacteristic(this.api.hap.Characteristic.LockTargetState, 0);
-        }   
-        else { // CLOSE
-          this.deviceService.setCharacteristic(this.api.hap.Characteristic.LockCurrentState, 1);
-          this.deviceService.setCharacteristic(this.api.hap.Characteristic.LockTargetState, 1);
-        }
-
-        this.log.info("Set door to : " + deviceStatus);
+        
+        if (deviceStatus != this.lastDeviceStatus) {
+          this.lastDeviceStatus = deviceStatus;
+          if (deviceStatus == this.offValue) { // OPEN
+            this.deviceService.setCharacteristic(this.api.hap.Characteristic.LockCurrentState, this.api.hap.Characteristic.LockCurrentState.UNSECURED);
+            this.deviceService.setCharacteristic(this.api.hap.Characteristic.LockTargetState, this.api.hap.Characteristic.LockTargetState.UNSECURED);
+          }   
+          else { // CLOSE
+            this.deviceService.setCharacteristic(this.api.hap.Characteristic.LockCurrentState, this.api.hap.Characteristic.LockCurrentState.SECURED);
+            this.deviceService.setCharacteristic(this.api.hap.Characteristic.LockTargetState, this.api.hap.Characteristic.LockTargetState.SECURED);
+          }
+          this.log.info("Set door to : " + deviceStatus);        
+        }     
       }
     });
 
