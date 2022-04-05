@@ -1,6 +1,6 @@
 {
   "name": "homebridge-mqtt-doorlock",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "doorlock accessory plugin for homebridge written in Typescript",
   "main": "dist/accessory.js",
   "scripts": {
@@ -37,9 +37,10 @@
   },
   "dependencies": {
     "@types/ws": "^8.2.0",
+    "hap-nodejs": "^0.10.0",
     "minimist": "^1.2.6",
     "mqtt": "^4.2.8",
-    "optimist": "^0.5.2"
+    "optimist": "^0.6.1"
   },
   "homepage": "https://github.com/akiifall/homebridge-mqtt-doorlock#readme"
 }
