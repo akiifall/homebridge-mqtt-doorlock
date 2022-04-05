@@ -37,7 +37,9 @@
   },
   "dependencies": {
     "@types/ws": "^8.2.0",
-    "mqtt": "^4.2.8"
+    "minimist": "^1.2.6",
+    "mqtt": "^4.2.8",
+    "optimist": "^0.5.2"
   },
   "homepage": "https://github.com/akiifall/homebridge-mqtt-doorlock#readme"
 }
