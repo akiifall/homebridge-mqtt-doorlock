@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@types/ws": "^8.2.0",
-    "hap-nodejs": "^0.9.8",
+    "hap-nodejs": "^0.11.1",
     "minimist": "^1.2.6",
     "mqtt": "^4.2.8",
     "optimist": "^0.5.2"
